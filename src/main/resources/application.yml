@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: gestion-creditos
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:h2:mem:gestioncreditos;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/creditos
+  tomcat:
+    threads:
+      max: 200
+    connection-timeout: 5000ms
+
+application:
+  motor-riesgo-url: "http://localhost:8081/api/evaluar-riesgo"
+  max-requests-per-second: 1500
+  idempotency-window-hours: 24
+  environment: dev
+  connect-timeout: 500
+  read-timeout: 2000
+
+logging:
+  level:
+    root: INFO
+    com.creditsystem.gestioncreditos: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40c{1.}){cyan} %clr(:){faint} %m%n%wEx"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
